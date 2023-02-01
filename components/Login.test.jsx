@@ -131,6 +131,29 @@ describe("should handle user events", () => {
         });
         fireEvent.click(btnElement);
 
-        await waitFor(() => expect(btnElement).not.toHaveTextContent(/please wait/i));
+        await waitFor(() =>
+            expect(btnElement).not.toHaveTextContent(/please wait/i)
+        );
+    });
+
+    test(`user should be rendered after fetching`, async () => {
+        render(<Login />);
+        const btnElement = screen.getByRole("button");
+        const userInputElement = screen.getByPlaceholderText(/username/i);
+        const passwordInputElement = screen.getByPlaceholderText(/password/i);
+
+        const testValue = "test";
+
+        fireEvent.change(userInputElement, { target: { value: testValue } });
+        fireEvent.change(passwordInputElement, {
+            target: { value: testValue },
+        });
+        fireEvent.click(btnElement);
+
+        const userItem = await screen.findByText("John Doe")
+
+        await waitFor(() =>
+            expect(userItem).toBeInTheDocument()
+        );
     });
 });
