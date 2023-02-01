@@ -1,4 +1,4 @@
-import { render, renderHook, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 // VITEST TESTS
@@ -28,13 +28,25 @@ test("1 number", () => {
 
 // DOM TESTS
 test("renders header", () => {
-  render(App())
+  render(App());
   const message = screen.queryByText(/Hello World/i);
   expect(message).toBeInTheDocument();
 });
 
 test("checks for 3 list items", () => {
-    render(App())
-    const listItems = screen.getAllByRole("listitem");
-    expect(listItems).toHaveLength(3);
-  });
+  render(App());
+  const listItems = screen.getAllByRole("listitem");
+  expect(listItems).toHaveLength(3);
+});
+
+test("checks for header with data test id", () => {
+  render(App());
+  const data = screen.getByTestId("mytestid");
+  expect(data).toBeInTheDocument();
+});
+
+test("sum", () => {
+  render(App());
+  const sum = screen.getByTitle("sum");
+  expect(sum.textContent).toEqual(6);
+});
