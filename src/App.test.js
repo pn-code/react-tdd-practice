@@ -1,6 +1,7 @@
 import { render, renderHook, screen } from "@testing-library/react";
 import App from "./App";
 
+// VITEST TESTS
 function sum(...nums) {
   return nums.reduce((a, b) => a + b, 0);
 }
@@ -25,8 +26,15 @@ test("1 number", () => {
   expect(sum(1)).toEqual(1);
 });
 
+// DOM TESTS
 test("renders header", () => {
   render(App())
   const message = screen.queryByText(/Hello World/i);
   expect(message).toBeInTheDocument();
 });
+
+test("checks for 3 list items", () => {
+    render(App())
+    const listItems = screen.getAllByRole("listitem");
+    expect(listItems).toHaveLength(3);
+  });
