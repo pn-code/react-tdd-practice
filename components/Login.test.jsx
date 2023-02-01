@@ -1,5 +1,15 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { vi } from "vitest";
 import Login from "./Login";
+
+vi.mock("axios", () => ({
+    __esModule: true,
+    default: {
+        get: () => ({
+            data: { id: 1, name: "John Doe" },
+        }),
+    },
+}));
 
 // TEST BLOCK #1
 describe("render form elements", () => {
@@ -91,7 +101,7 @@ describe("should handle user events", () => {
 
         expect(btnElement).not.toBeDisabled();
     });
-    
+
     test(`button should render "loading" when clicked`, () => {
         render(<Login />);
         const btnElement = screen.getByRole("button");
@@ -106,5 +116,21 @@ describe("should handle user events", () => {
         fireEvent.click(btnElement);
 
         expect(btnElement).toHaveTextContent(/please wait/i);
+    });
+
+    test(`button should not render "loading" after our API call`, async () => {
+        render(<Login />);
+        const btnElement = screen.getByRole("button");
+        const userInputElement = screen.getByPlaceholderText(/username/i);
+        const passwordInputElement = screen.getByPlaceholderText(/password/i);
+        const testValue = "test";
+
+        fireEvent.change(userInputElement, { target: { value: testValue } });
+        fireEvent.change(passwordInputElement, {
+            target: { value: testValue },
+        });
+        fireEvent.click(btnElement);
+
+        await waitFor(() => expect(btnElement).not.toHaveTextContent(/please wait/i));
     });
 });

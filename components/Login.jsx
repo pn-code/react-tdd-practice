@@ -17,8 +17,9 @@ const Login = () => {
             );
             setUser(data);
         } catch (error) {
-            console.log(error);
+            setError(true);
         }
+        setLoading(false);
     };
 
     return (
