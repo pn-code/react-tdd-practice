@@ -36,10 +36,16 @@ describe("on start, check form elements", () => {
         expect(passwordInputElement.value).toBe("");
     });
 
-    test("submit button should be disabled", () => {
+    test("button should be disabled", () => {
         render(<Login />);
         const btnElement = screen.getByRole("button");
         expect(btnElement).toBeDisabled();
+    });
+
+    test("button should be disabled", () => {
+        render(<Login />);
+        const btnElement = screen.getByRole("button");
+        expect(btnElement).not.toBe("Please Wait...");
     });
 
     test("error message should not be visible", () => {
@@ -50,7 +56,7 @@ describe("on start, check form elements", () => {
 });
 
 // TEST BLOCK #3
-describe("input on change", () => {
+describe("should handle user events", () => {
     test("username input should be rendered", () => {
         render(<Login />);
         const userInputElement = screen.getByPlaceholderText(/username/i);
@@ -65,7 +71,40 @@ describe("input on change", () => {
         const passwordInputElement = screen.getByPlaceholderText(/password/i);
         const testValue = "test";
 
-        fireEvent.change(passwordInputElement, { target: { value: testValue } });
+        fireEvent.change(passwordInputElement, {
+            target: { value: testValue },
+        });
         expect(passwordInputElement.value).toBe(testValue);
+    });
+
+    test("button is not disabled if both inputs have values", () => {
+        render(<Login />);
+        const btnElement = screen.getByRole("button");
+        const userInputElement = screen.getByPlaceholderText(/username/i);
+        const passwordInputElement = screen.getByPlaceholderText(/password/i);
+        const testValue = "test";
+
+        fireEvent.change(userInputElement, { target: { value: testValue } });
+        fireEvent.change(passwordInputElement, {
+            target: { value: testValue },
+        });
+
+        expect(btnElement).not.toBeDisabled();
+    });
+    
+    test(`button should render "loading" when clicked`, () => {
+        render(<Login />);
+        const btnElement = screen.getByRole("button");
+        const userInputElement = screen.getByPlaceholderText(/username/i);
+        const passwordInputElement = screen.getByPlaceholderText(/password/i);
+        const testValue = "test";
+
+        fireEvent.change(userInputElement, { target: { value: testValue } });
+        fireEvent.change(passwordInputElement, {
+            target: { value: testValue },
+        });
+        fireEvent.click(btnElement);
+
+        expect(btnElement).toHaveTextContent(/please wait/i);
     });
 });
